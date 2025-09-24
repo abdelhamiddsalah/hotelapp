@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapp/core/styling/colors.dart';
+import 'package:hotelapp/core/widgets/empty_state.dart';
+import 'package:hotelapp/core/widgets/messaes.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/sliver_app_bar.dart';
 
 class MaintenanceView extends StatefulWidget {
   const MaintenanceView({super.key});
@@ -14,75 +17,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
   late Animation<double> _fadeAnimation;
   String _selectedFilter = 'All';
 
-  // بيانات تجريبية محسنة
-  List<Map<String, dynamic>> issues = [
-    {
-      'room': '201',
-      'issue': 'Air Conditioner not working',
-      'status': 'Pending',
-      'priority': 'High',
-      'category': 'HVAC',
-      'reportedBy': 'Reception',
-      'assignedTo': 'Ahmed Tech',
-      'reportedDate': '2025-09-23',
-      'estimatedTime': '2 hours',
-      'description': 'Guest complained that AC is not cooling properly. Needs immediate attention.',
-      'cost': '\$150'
-    },
-    {
-      'room': '305',
-      'issue': 'Water leakage in bathroom',
-      'status': 'In Progress',
-      'priority': 'High',
-      'category': 'Plumbing',
-      'reportedBy': 'Housekeeping',
-      'assignedTo': 'Omar Plumber',
-      'reportedDate': '2025-09-22',
-      'estimatedTime': '3 hours',
-      'description': 'Water leaking from shower head and pipe connections.',
-      'cost': '\$200'
-    },
-    {
-      'room': '410',
-      'issue': 'Broken TV',
-      'status': 'Completed',
-      'priority': 'Medium',
-      'category': 'Electronics',
-      'reportedBy': 'Guest',
-      'assignedTo': 'Sara Electronics',
-      'reportedDate': '2025-09-21',
-      'estimatedTime': '1 hour',
-      'description': 'TV screen is cracked and not displaying properly.',
-      'cost': '\$300'
-    },
-    {
-      'room': '102',
-      'issue': 'Door lock malfunction',
-      'status': 'Pending',
-      'priority': 'High',
-      'category': 'Security',
-      'reportedBy': 'Security',
-      'assignedTo': 'Khaled Security',
-      'reportedDate': '2025-09-24',
-      'estimatedTime': '45 min',
-      'description': 'Electronic door lock is not responding to key cards.',
-      'cost': '\$80'
-    },
-    {
-      'room': '508',
-      'issue': 'Light fixture replacement',
-      'status': 'In Progress',
-      'priority': 'Low',
-      'category': 'Electrical',
-      'reportedBy': 'Housekeeping',
-      'assignedTo': 'Mostafa Electric',
-      'reportedDate': '2025-09-20',
-      'estimatedTime': '30 min',
-      'description': 'Ceiling light is flickering and needs replacement.',
-      'cost': '\$50'
-    },
-  ];
-
+  // بيانات تجريبية محسن
   @override
   void initState() {
     super.initState();
@@ -242,7 +177,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
       backgroundColor: Colors.grey[50],
       body: CustomScrollView(
         slivers: [
-          _buildSliverAppBar(),
+          SliverAppbarr(animationController: _animationController, title: 'Maintenance'),
           SliverToBoxAdapter(
             child: _buildStatusOverview(statusCounts),
           ),
@@ -252,7 +187,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
           SliverPadding(
             padding: const EdgeInsets.all(20),
             sliver: filteredIssues.isEmpty
-                ? SliverFillRemaining(child: _buildEmptyState())
+                ? SliverFillRemaining(child: EmptyState(text1: 'No Issues Found', text2: 'No maintenance issues match the selected filter'))
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => FadeTransition(
@@ -284,47 +219,6 @@ class _MaintenanceViewState extends State<MaintenanceView>
         icon: Icon(Icons.add, color: Colors.white),
         label: Text('Add Issue', style: TextStyle(color: Colors.white)),
       ),
-    );
-  }
-
-  Widget _buildSliverAppBar() {
-    return SliverAppBar(
-      expandedHeight: 120,
-      floating: false,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: AppColors.primaryColor,
-      flexibleSpace: FlexibleSpaceBar(
-        title: const Text(
-          'Maintenance',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primaryColor,
-                AppColors.primaryColor.withOpacity(0.8),
-              ],
-            ),
-          ),
-        ),
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh, color: Colors.white),
-          onPressed: () {
-            _animationController.reset();
-            _animationController.forward();
-          },
-        ),
-      ],
     );
   }
 
@@ -940,46 +834,6 @@ class _MaintenanceViewState extends State<MaintenanceView>
       ),
     );
   }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.build,
-              size: 80,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            "No Issues Found",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "No maintenance issues match the selected filter",
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showAddIssueDialog() {
     showDialog(
       context: context,

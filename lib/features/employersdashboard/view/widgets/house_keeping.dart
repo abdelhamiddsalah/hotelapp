@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapp/core/styling/colors.dart';
+import 'package:hotelapp/core/widgets/empty_state.dart';
+import 'package:hotelapp/core/widgets/messaes.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/sliver_app_bar.dart';
 
 class HousekeepingView extends StatefulWidget {
   const HousekeepingView({super.key});
@@ -14,70 +17,6 @@ class _HousekeepingViewState extends State<HousekeepingView>
   late Animation<double> _fadeAnimation;
   String _selectedFilter = 'All';
 
-  // بيانات تجريبية محسنة
-  List<Map<String, dynamic>> rooms = [
-    {
-      'room': '101',
-      'status': 'Dirty',
-      'floor': '1',
-      'type': 'Standard',
-      'priority': 'High',
-      'assignedTo': 'Sara Ahmed',
-      'lastCleaned': '2025-09-23',
-      'estimatedTime': '45 min'
-    },
-    {
-      'room': '102',
-      'status': 'Clean',
-      'floor': '1',
-      'type': 'Deluxe',
-      'priority': 'Medium',
-      'assignedTo': 'Nour Hassan',
-      'lastCleaned': '2025-09-24',
-      'estimatedTime': '30 min'
-    },
-    {
-      'room': '103',
-      'status': 'Dirty',
-      'floor': '1',
-      'type': 'Suite',
-      'priority': 'High',
-      'assignedTo': 'Fatma Ali',
-      'lastCleaned': '2025-09-22',
-      'estimatedTime': '60 min'
-    },
-    {
-      'room': '104',
-      'status': 'Maintenance',
-      'floor': '1',
-      'type': 'Standard',
-      'priority': 'High',
-      'assignedTo': 'Ahmed Khaled',
-      'lastCleaned': '2025-09-20',
-      'estimatedTime': '90 min'
-    },
-    {
-      'room': '201',
-      'status': 'In Progress',
-      'floor': '2',
-      'type': 'Deluxe',
-      'priority': 'Medium',
-      'assignedTo': 'Mona Sayed',
-      'lastCleaned': '2025-09-24',
-      'estimatedTime': '20 min'
-    },
-    {
-      'room': '202',
-      'status': 'Dirty',
-      'floor': '2',
-      'type': 'Standard',
-      'priority': 'Low',
-      'assignedTo': 'Hala Omar',
-      'lastCleaned': '2025-09-23',
-      'estimatedTime': '45 min'
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -85,13 +24,9 @@ class _HousekeepingViewState extends State<HousekeepingView>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _animationController.forward();
   }
 
@@ -106,85 +41,18 @@ class _HousekeepingViewState extends State<HousekeepingView>
       rooms[index]['status'] = 'Clean';
       rooms[index]['lastCleaned'] = '2025-09-24';
     });
-    _showCustomSnackBar('Room ${rooms[index]['room']} marked as Clean! ✨', Colors.green);
   }
 
   void _markInProgress(int index) {
     setState(() {
       rooms[index]['status'] = 'In Progress';
     });
-    _showCustomSnackBar('Room ${rooms[index]['room']} cleaning started! 🧹', Colors.blue);
   }
 
   void _markForMaintenance(int index) {
     setState(() {
       rooms[index]['status'] = 'Maintenance';
     });
-    _showCustomSnackBar('Room ${rooms[index]['room']} marked for maintenance! 🔧', Colors.orange);
-  }
-
-  void _showCustomSnackBar(String message, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: EdgeInsets.all(16),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Clean':
-        return Colors.green;
-      case 'Dirty':
-        return Colors.red;
-      case 'In Progress':
-        return Colors.blue;
-      case 'Maintenance':
-        return Colors.orange;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status) {
-      case 'Clean':
-        return Icons.check_circle;
-      case 'Dirty':
-        return Icons.cleaning_services;
-      case 'In Progress':
-        return Icons.hourglass_top;
-      case 'Maintenance':
-        return Icons.build;
-      default:
-        return Icons.help_outline;
-    }
-  }
-
-  Color _getPriorityColor(String priority) {
-    switch (priority) {
-      case 'High':
-        return Colors.red;
-      case 'Medium':
-        return Colors.orange;
-      case 'Low':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
   }
 
   List<Map<String, dynamic>> _getFilteredRooms() {
@@ -214,33 +82,40 @@ class _HousekeepingViewState extends State<HousekeepingView>
       backgroundColor: Colors.grey[50],
       body: CustomScrollView(
         slivers: [
-          _buildSliverAppBar(),
-          SliverToBoxAdapter(
-            child: _buildStatusOverview(statusCounts),
+          SliverAppbarr(
+            animationController: _animationController,
+            title: 'Housekeeping',
           ),
-          SliverToBoxAdapter(
-            child: _buildFilterChips(),
-          ),
+          SliverToBoxAdapter(child: _buildStatusOverview(statusCounts)),
+          SliverToBoxAdapter(child: _buildFilterChips()),
           SliverPadding(
             padding: const EdgeInsets.all(20),
             sliver: filteredRooms.isEmpty
-                ? SliverFillRemaining(child: _buildEmptyState())
+                ? SliverFillRemaining(
+                    child: EmptyState(
+                      text1: "No Rooms Found",
+                      text2: "No rooms match the selected filter",
+                    ),
+                  )
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => FadeTransition(
                         opacity: _fadeAnimation,
                         child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: Offset(0, 0.3),
-                            end: Offset.zero,
-                          ).animate(CurvedAnimation(
-                            parent: _animationController,
-                            curve: Interval(
-                              index * 0.1,
-                              1.0,
-                              curve: Curves.easeOutCubic,
-                            ),
-                          )),
+                          position:
+                              Tween<Offset>(
+                                begin: Offset(0, 0.3),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: _animationController,
+                                  curve: Interval(
+                                    index * 0.1,
+                                    1.0,
+                                    curve: Curves.easeOutCubic,
+                                  ),
+                                ),
+                              ),
                           child: _buildRoomCard(filteredRooms[index], index),
                         ),
                       ),
@@ -250,47 +125,6 @@ class _HousekeepingViewState extends State<HousekeepingView>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSliverAppBar() {
-    return SliverAppBar(
-      expandedHeight: 120,
-      floating: false,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: AppColors.primaryColor,
-      flexibleSpace: FlexibleSpaceBar(
-        title: const Text(
-          'Housekeeping',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primaryColor,
-                AppColors.primaryColor.withOpacity(0.8),
-              ],
-            ),
-          ),
-        ),
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh, color: Colors.white),
-          onPressed: () {
-            _animationController.reset();
-            _animationController.forward();
-          },
-        ),
-      ],
     );
   }
 
@@ -323,17 +157,45 @@ class _HousekeepingViewState extends State<HousekeepingView>
           SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _buildStatusCard('Clean', counts['Clean']!, Colors.green, Icons.check_circle)),
+              Expanded(
+                child: _buildStatusCard(
+                  'Clean',
+                  counts['Clean']!,
+                  Colors.green,
+                  Icons.check_circle,
+                ),
+              ),
               SizedBox(width: 12),
-              Expanded(child: _buildStatusCard('Dirty', counts['Dirty']!, Colors.red, Icons.cleaning_services)),
+              Expanded(
+                child: _buildStatusCard(
+                  'Dirty',
+                  counts['Dirty']!,
+                  Colors.red,
+                  Icons.cleaning_services,
+                ),
+              ),
             ],
           ),
           SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildStatusCard('In Progress', counts['In Progress']!, Colors.blue, Icons.hourglass_top)),
+              Expanded(
+                child: _buildStatusCard(
+                  'In Progress',
+                  counts['In Progress']!,
+                  Colors.blue,
+                  Icons.hourglass_top,
+                ),
+              ),
               SizedBox(width: 12),
-              Expanded(child: _buildStatusCard('Maintenance', counts['Maintenance']!, Colors.orange, Icons.build)),
+              Expanded(
+                child: _buildStatusCard(
+                  'Maintenance',
+                  counts['Maintenance']!,
+                  Colors.orange,
+                  Icons.build,
+                ),
+              ),
             ],
           ),
         ],
@@ -376,7 +238,7 @@ class _HousekeepingViewState extends State<HousekeepingView>
 
   Widget _buildFilterChips() {
     final filters = ['All', 'Dirty', 'Clean', 'In Progress', 'Maintenance'];
-    
+
     return Container(
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -386,7 +248,7 @@ class _HousekeepingViewState extends State<HousekeepingView>
         itemBuilder: (context, index) {
           final filter = filters[index];
           final isSelected = _selectedFilter == filter;
-          
+
           return Container(
             margin: const EdgeInsets.only(right: 12),
             child: FilterChip(
@@ -407,7 +269,9 @@ class _HousekeepingViewState extends State<HousekeepingView>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
                 side: BorderSide(
-                  color: isSelected ? AppColors.primaryColor : Colors.grey[300]!,
+                  color: isSelected
+                      ? AppColors.primaryColor
+                      : Colors.grey[300]!,
                 ),
               ),
             ),
@@ -430,13 +294,10 @@ class _HousekeepingViewState extends State<HousekeepingView>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.white,
-                Colors.grey[50]!,
-              ],
+              colors: [Colors.white, Colors.grey[50]!],
             ),
             border: Border.all(
-              color: _getStatusColor(room['status']).withOpacity(0.3),
+              color: getStatusColor(room['status']).withOpacity(0.3),
               width: 1,
             ),
           ),
@@ -467,10 +328,10 @@ class _HousekeepingViewState extends State<HousekeepingView>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: _getStatusColor(room['status']).withOpacity(0.1),
+              color: getStatusColor(room['status']).withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: _getStatusColor(room['status']).withOpacity(0.3),
+                color: getStatusColor(room['status']).withOpacity(0.3),
                 width: 2,
               ),
             ),
@@ -478,14 +339,14 @@ class _HousekeepingViewState extends State<HousekeepingView>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  _getStatusIcon(room['status']),
-                  color: _getStatusColor(room['status']),
+                  getStatusIcon(room['status']),
+                  color: getStatusColor(room['status']),
                   size: 20,
                 ),
                 Text(
                   room['room'],
                   style: TextStyle(
-                    color: _getStatusColor(room['status']),
+                    color: getStatusColor(room['status']),
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
@@ -511,7 +372,10 @@ class _HousekeepingViewState extends State<HousekeepingView>
                   ),
                   SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
@@ -531,7 +395,10 @@ class _HousekeepingViewState extends State<HousekeepingView>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.blue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -547,15 +414,20 @@ class _HousekeepingViewState extends State<HousekeepingView>
                   ),
                   SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: _getPriorityColor(room['priority']).withOpacity(0.1),
+                      color: getPriorityColor(
+                        room['priority'],
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '${room['priority']} Priority',
                       style: TextStyle(
-                        color: _getPriorityColor(room['priority']),
+                        color: getPriorityColor(room['priority']),
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                       ),
@@ -569,13 +441,13 @@ class _HousekeepingViewState extends State<HousekeepingView>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: _getStatusColor(room['status']).withOpacity(0.1),
+            color: getStatusColor(room['status']).withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             room['status'],
             style: TextStyle(
-              color: _getStatusColor(room['status']),
+              color: getStatusColor(room['status']),
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
@@ -604,11 +476,7 @@ class _HousekeepingViewState extends State<HousekeepingView>
                   Colors.purple,
                 ),
               ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.grey[300],
-              ),
+              Container(width: 1, height: 40, color: Colors.grey[300]),
               Expanded(
                 child: _buildDetailItem(
                   Icons.access_time,
@@ -635,7 +503,12 @@ class _HousekeepingViewState extends State<HousekeepingView>
     );
   }
 
-  Widget _buildDetailItem(IconData icon, String label, String value, Color color) {
+  Widget _buildDetailItem(
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 20),
@@ -664,7 +537,7 @@ class _HousekeepingViewState extends State<HousekeepingView>
 
   Widget _buildRoomActions(Map<String, dynamic> room, int index) {
     final status = room['status'];
-    
+
     if (status == 'Dirty') {
       return Row(
         children: [
@@ -746,44 +619,5 @@ class _HousekeepingViewState extends State<HousekeepingView>
         ),
       );
     }
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.cleaning_services,
-              size: 80,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            "No Rooms Found",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "No rooms match the selected filter",
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
