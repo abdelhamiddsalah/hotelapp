@@ -8,7 +8,6 @@ import 'package:hotelapp/core/widgets/custom_text_formfield.dart';
 import 'package:hotelapp/features/clientsauth/view/widgets/header_in_client_login.dart';
 import 'package:hotelapp/features/clientsauth/view/widgets/last_row_in_auth.dart';
 import 'package:hotelapp/features/employersauth/view/widgets/employer_auth_button.dart';
-
 class ClientLoginViewBody extends StatefulWidget {
   const ClientLoginViewBody({super.key});
 

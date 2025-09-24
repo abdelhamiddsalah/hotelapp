@@ -3,6 +3,11 @@ import 'package:hotelapp/core/routing/routes.dart';
 import 'package:hotelapp/features/clientsauth/view/client_auth_view.dart';
 import 'package:hotelapp/features/clientsauth/view/client_login_view.dart';
 import 'package:hotelapp/features/employersauth/view/employers_login_view.dart';
+import 'package:hotelapp/features/employersdashboard/view/employers_dashboard_view.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/checkin_view.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/house_keeping.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/maintaince_view.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/pending_reversation.dart';
 import 'package:hotelapp/features/onboarding/view/onboarding_view.dart';
 import 'package:hotelapp/features/onboarding/view/widgets/learn_more.dart';
 import 'package:hotelapp/features/splash/view/splash_view.dart';
@@ -38,7 +43,22 @@ class AppRouting {
       ),
       GoRoute(path: Routes.employerLogin,
       builder: (context, state) => const EmployersLoginView(),
-      )
+      ),
+      GoRoute(path: Routes.employersDashboard,
+      builder: (context, state) => const EmployersDashboardView(),
+      ),
+       GoRoute(path: Routes.pendingReservations,
+       builder: (context, state) => const PendingReservationsView(),
+     ),
+     GoRoute(path: Routes.checkoutIn,
+       builder: (context, state) => const CheckInOutView(),
+     ),
+      GoRoute(path: Routes.housekeeping,
+        builder: (context, state) => const HousekeepingView(),
+      ),
+      GoRoute(path: Routes.maintenance,
+        builder: (context, state) => const MaintenanceView(),
+      ),
     ],
   );
 }

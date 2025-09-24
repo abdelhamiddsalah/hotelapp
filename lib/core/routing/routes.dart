@@ -6,4 +6,9 @@ class Routes {
   static const String clientLogin = '/clientLogin';
   static const String employerLogin = '/employerLogin';
   static const String userChoice = '/userChoice';
+  static const String employersDashboard = '/employersDashboard';
+  static const String pendingReservations = '/pendingReservations';
+  static const String checkoutIn = '/checkinout';
+  static const String housekeeping = '/housekeeping';
+  static const String maintenance = '/maintenance';
 }
