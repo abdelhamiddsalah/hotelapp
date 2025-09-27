@@ -10,12 +10,11 @@ class SplashView extends StatefulWidget {
   _SplashViewState createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView>
-    with TickerProviderStateMixin {
+class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late AnimationController _fadeController;
   late AnimationController _rotateController;
-  
+
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _rotateAnimation;
@@ -23,47 +22,35 @@ class _SplashViewState extends State<SplashView>
   @override
   void initState() {
     super.initState();
-    
+
     // إعداد الأنيميشن controllers
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _rotateController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
 
     // إعداد الأنيميشن
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _rotateAnimation = Tween<double>(
-      begin: 0.0,
-      end: 0.1,
-    ).animate(CurvedAnimation(
-      parent: _rotateController,
-      curve: Curves.easeInOut,
-    ));
+    _rotateAnimation = Tween<double>(begin: 0.0, end: 0.1).animate(
+      CurvedAnimation(parent: _rotateController, curve: Curves.easeInOut),
+    );
 
     // بدء الأنيميشن
     _startAnimations();
@@ -72,20 +59,20 @@ class _SplashViewState extends State<SplashView>
   void _startAnimations() async {
     await Future.delayed(const Duration(milliseconds: 300));
     _fadeController.forward();
-    
+
     await Future.delayed(const Duration(milliseconds: 500));
     _scaleController.forward();
-    
+
     await Future.delayed(const Duration(milliseconds: 800));
     _rotateController.repeat(reverse: true);
-    
+
     // انتظار 4 ثواني ثم الانتقال للصفحة التالية
     await Future.delayed(const Duration(seconds: 4));
     _navigateToHome();
   }
 
   void _navigateToHome() {
-   context.go(Routes.clientsDashboard);
+    context.go(Routes.roomDetails);
   }
 
   @override
@@ -101,10 +88,7 @@ class _SplashViewState extends State<SplashView>
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
       body: Container(
-        decoration: BoxDecoration(
-         
-        
-        ),
+        decoration: BoxDecoration(),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -131,12 +115,16 @@ class _SplashViewState extends State<SplashView>
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.secondaryColor.withOpacity(0.3),
+                                color: AppColors.secondaryColor.withOpacity(
+                                  0.3,
+                                ),
                                 blurRadius: 30,
                                 offset: const Offset(0, 8),
                               ),
                               BoxShadow(
-                                color: AppColors.secondaryColor.withOpacity(0.1),
+                                color: AppColors.secondaryColor.withOpacity(
+                                  0.1,
+                                ),
                                 blurRadius: 50,
                                 offset: const Offset(0, 16),
                               ),
@@ -152,8 +140,8 @@ class _SplashViewState extends State<SplashView>
                     ),
                   );
                 },
-              ),    
-              const SizedBox(height: 40),  
+              ),
+              const SizedBox(height: 40),
               // اسم الفندق مع أنيميشن fade
               AnimatedBuilder(
                 animation: _fadeAnimation,
@@ -186,4 +174,3 @@ class _SplashViewState extends State<SplashView>
     );
   }
 }
-

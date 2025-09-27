@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hotelapp/core/routing/routes.dart';
 import 'package:hotelapp/core/styling/colors.dart';
-import 'package:hotelapp/features/clientsdasboard/data/models/room_model.dart';
+import 'package:hotelapp/features/clientsdashboard/data/models/room_model.dart';
 
 class RoomCard extends StatelessWidget {
   const RoomCard({
@@ -137,7 +139,7 @@ class RoomCard extends StatelessWidget {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              
+                              context.go(Routes.roomDetails, extra: room);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryColor,

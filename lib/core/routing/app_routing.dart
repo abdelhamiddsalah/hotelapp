@@ -2,9 +2,11 @@ import 'package:go_router/go_router.dart';
 import 'package:hotelapp/core/routing/routes.dart';
 import 'package:hotelapp/features/clientsauth/view/client_auth_view.dart';
 import 'package:hotelapp/features/clientsauth/view/client_login_view.dart';
-import 'package:hotelapp/features/clientsdasboard/view/client_dashboard_view.dart';
+import 'package:hotelapp/features/clientsdashboard/view/client_dashboard_view.dart';
+import 'package:hotelapp/features/clientsdashboard/view/widgets/room_details.dart';
 import 'package:hotelapp/features/employersauth/view/employers_login_view.dart';
 import 'package:hotelapp/features/employersdashboard/view/employers_dashboard_view.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/add_room_widget.dart';
 import 'package:hotelapp/features/employersdashboard/view/widgets/checkin_view.dart';
 import 'package:hotelapp/features/employersdashboard/view/widgets/house_keeping.dart';
 import 'package:hotelapp/features/employersdashboard/view/widgets/maintaince_view.dart';
@@ -60,8 +62,14 @@ class AppRouting {
       GoRoute(path: Routes.maintenance,
         builder: (context, state) => const MaintenanceView(),
       ),
+      GoRoute(path: Routes.addRoom,
+        builder: (context, state) => const AddRoomWidget(),
+      ),
       GoRoute(path: Routes.clientsDashboard,
         builder: (context, state) => const ClientDashboardView(),
+      ),
+      GoRoute(path: Routes.roomDetails,
+        builder: (context, state) => RoomDetailsPage(),
       ),
     ],
   );

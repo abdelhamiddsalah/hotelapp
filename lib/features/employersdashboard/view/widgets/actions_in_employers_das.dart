@@ -55,7 +55,7 @@ class ActionsInEmployersDas extends StatelessWidget {
               icon: Icons.room_outlined,
               color: Colors.orange,
               onTap: () {
-                context.go(Routes.pendingReservations);
+                context.go(Routes.addRoom);
               },
             ),
           ),

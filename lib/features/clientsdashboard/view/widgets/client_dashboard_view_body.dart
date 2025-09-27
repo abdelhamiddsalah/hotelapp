@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapp/core/styling/colors.dart';
-import 'package:hotelapp/features/clientsdasboard/data/models/room_model.dart';
-import 'package:hotelapp/features/clientsdasboard/view/widgets/client_app_bar.dart';
-import 'package:hotelapp/features/clientsdasboard/view/widgets/header_in_client_dashh.dart';
-import 'package:hotelapp/features/clientsdasboard/view/widgets/room_card.dart';
+import 'package:hotelapp/features/clientsdashboard/data/models/room_model.dart';
+import 'package:hotelapp/features/clientsdashboard/view/widgets/client_app_bar.dart';
+import 'package:hotelapp/features/clientsdashboard/view/widgets/header_in_client_dashh.dart';
+import 'package:hotelapp/features/clientsdashboard/view/widgets/room_card.dart';
 
 class ClientDashboardViewBody extends StatefulWidget {
   const ClientDashboardViewBody({super.key});

@@ -13,4 +13,5 @@ class Routes {
   static const String maintenance = '/maintenance';
   static const String addRoom = '/addRoom';
   static const String clientsDashboard = '/clientsDashboard';
+  static const String roomDetails = '/roomDetails';
 }

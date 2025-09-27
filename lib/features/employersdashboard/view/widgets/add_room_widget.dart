@@ -4,12 +4,14 @@ import 'package:hotelapp/core/styling/colors.dart';
 // Room Types Enum
 enum RoomTypes { SINGLE, DOUBLE, SUITE, DELUXE }
 
-class AddRoomPage extends StatefulWidget {
+class AddRoomWidget extends StatefulWidget {
+  const AddRoomWidget({super.key});
+
   @override
-  _AddRoomPageState createState() => _AddRoomPageState();
+  _AddRoomWidgetState createState() => _AddRoomWidgetState();
 }
 
-class _AddRoomPageState extends State<AddRoomPage> {
+class _AddRoomWidgetState extends State<AddRoomWidget> {
   final _formKey = GlobalKey<FormState>();
   final _roomNumberController = TextEditingController();
   final _priceController = TextEditingController();
