@@ -47,6 +47,21 @@ class ActionsInEmployersDas extends StatelessWidget {
         ],
       ),
       const SizedBox(height: 12),
+        Row(
+        children: [
+          Expanded(
+            child: CardInEmployersDashboard(
+              title: 'Add Room',
+              icon: Icons.room_outlined,
+              color: Colors.orange,
+              onTap: () {
+                context.go(Routes.pendingReservations);
+              },
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
       Row(
         children: [
           Expanded(
