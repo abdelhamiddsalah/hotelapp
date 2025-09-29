@@ -86,7 +86,7 @@ class RoomCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              room.name,
+                              'Room ${room.roomNumber}',
                               style: TextStyle(
                                 color: AppColors.primaryColor,
                                 fontSize: 16,
@@ -104,7 +104,7 @@ class RoomCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              room.id,
+                              room.roomNumber.toString(),
                               style: TextStyle(
                                 color: AppColors.primaryColor,
                                 fontSize: 12,

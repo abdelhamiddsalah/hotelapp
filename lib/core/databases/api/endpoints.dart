@@ -9,8 +9,8 @@ class Endpoints {
     }
   }
 
-  static const String signupTeacher = "teacher/createTeacher";
-  static const String loginTeacher = "teacher/loginTeacher";
-  static const String forgetPassword = "teacher/forgetpassword";
-
+  static const String addRoom = "rooms/addRoom";
+  static const String getAllRooms = "rooms/getRooms";
+  static String getAllRoomsByType(String type) => "rooms/getRoomsByType/$type";
+  static String getRoomById(int id) => "rooms/getRoomByid/$id";
 }

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hotelapp/core/styling/colors.dart';
-
-// Room Types Enum
-enum RoomTypes { SINGLE, DOUBLE, SUITE, DELUXE }
+import 'package:hotelapp/core/widgets/custom_button.dart';
+import 'package:hotelapp/core/widgets/main_app_bar.dart';
+import 'package:hotelapp/features/clientsdashboard/data/models/room_model.dart';
+import 'package:hotelapp/features/employersdashboard/view/viewmodel/cubits/cubit/add_room_cubit.dart';
+import 'package:hotelapp/core/enums/enum.dart';
+import 'package:hotelapp/features/employersdashboard/view/widgets/header_in_add_room.dart'; // Import the shared RoomTypes enum
 
 class AddRoomWidget extends StatefulWidget {
   const AddRoomWidget({super.key});
@@ -12,15 +17,6 @@ class AddRoomWidget extends StatefulWidget {
 }
 
 class _AddRoomWidgetState extends State<AddRoomWidget> {
-  final _formKey = GlobalKey<FormState>();
-  final _roomNumberController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _imageController = TextEditingController();
-
-  RoomTypes? selectedRoomType;
-  bool isReserved = false;
-  
   // Available amenities
   List<String> availableAmenities = [
     'WiFi',
@@ -34,34 +30,20 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
     'Safe',
     'Desk',
     'Coffee Maker',
-    'Refrigerator'
+    'Refrigerator',
   ];
-  
+
   Set<String> selectedAmenities = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Add New Room',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: AppColors.primaryColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: MainAppBar(title: 'Add New Room'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Form(
-          key: _formKey,
+          key: context.read<AddRoomCubit>().formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -80,106 +62,82 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.hotel,
-                      size: 50,
-                      color: AppColors.primaryColor,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Room Registration Form',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Fill in the details to add a new room to the hotel',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                child: HeaderInAddRoom(),
               ),
-              
+
               SizedBox(height: 25),
-              
+
               // Basic Information Section
               _buildSectionHeader('Basic Information', Icons.info_outline),
               SizedBox(height: 15),
-              
+
               _buildCard([
                 // Room Number
                 _buildTextFormField(
-                  controller: _roomNumberController,
+                  controller: context.read<AddRoomCubit>().roomNumberController,
                   label: 'Room Number',
                   hint: 'Enter room number (e.g., 101, 205)',
                   icon: Icons.numbers,
                   keyboardType: TextInputType.number,
                 ),
-                
+
                 SizedBox(height: 20),
-                
+
                 // Room Type Dropdown
                 _buildDropdownField(),
-                
+
                 SizedBox(height: 20),
-                
+
                 // Price Field
                 _buildTextFormField(
-                  controller: _priceController,
+                  controller: context.read<AddRoomCubit>().priceController,
                   label: 'Price per Night (\$)',
                   hint: 'Enter price per night',
                   icon: Icons.attach_money,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
               ]),
-              
+
               SizedBox(height: 25),
-              
+
               // Room Details Section
               _buildSectionHeader('Room Details', Icons.description),
               SizedBox(height: 15),
-              
+
               _buildCard([
                 // Description
                 _buildTextFormField(
-                  controller: _descriptionController,
+                  controller: context
+                      .read<AddRoomCubit>()
+                      .descriptionController,
                   label: 'Room Description',
                   hint: 'Enter detailed description of the room',
                   icon: Icons.description,
                   maxLines: 4,
                 ),
-                
+
                 SizedBox(height: 20),
-                
+
                 // Image URL
                 _buildTextFormField(
-                  controller: _imageController,
+                  controller: context.read<AddRoomCubit>().imageController,
                   label: 'Room Image URL',
                   hint: 'Enter image URL for the room',
                   icon: Icons.image,
                 ),
-                
+
                 SizedBox(height: 20),
-                
+
                 // Reservation Status
                 _buildReservationToggle(),
               ]),
-              
+
               SizedBox(height: 25),
-              
+
               // Amenities Section
               _buildSectionHeader('Room Amenities', Icons.star),
               SizedBox(height: 15),
-              
+
               _buildCard([
                 Text(
                   'Select available amenities for this room:',
@@ -192,42 +150,130 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
                 SizedBox(height: 15),
                 _buildAmenitiesGrid(),
               ]),
-              
+
               SizedBox(height: 30),
-              
               // Action Buttons
               Row(
                 children: [
                   Expanded(
-                    child: _buildButton(
+                    child: CustomButton(
                       text: 'Cancel',
                       color: Colors.grey[600]!,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => context.pop(),
                       isSecondary: true,
                     ),
                   ),
                   SizedBox(width: 15),
                   Expanded(
                     flex: 2,
-                    child: _buildButton(
-                      text: 'Add Room',
-                      color: AppColors.primaryColor,
-                      onPressed: () {
-                        // Form validation and submission logic would go here
-                        _showSuccessDialog();
+                    child: BlocConsumer<AddRoomCubit, AddRoomState>(
+                      listener: (context, state) {
+                        if (state is RoomNumberIsFound) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Room number already exists!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (state is AddRoomSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Room added successfully!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } else if (state is AddRoomError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Failed to add room. Please try again.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          
+                        }
+                      },
+                      builder: (context, state) {
+                        return CustomButton(
+                          text:  state is AddRoomLoading ? 'Adding Room...' : 'Add Room',
+                        onPressed: () {
+  // اربط الـ amenities من الـ UI للـ Cubit
+  context.read<AddRoomCubit>().amenities
+    ..clear()
+    ..addAll(selectedAmenities);
+
+  context.read<AddRoomCubit>().addRoom(
+    RoomModel(
+      roomNumber: int.parse(
+        context.read<AddRoomCubit>().roomNumberController.text,
+      ),
+      isReversed: context.read<AddRoomCubit>().isReserved,
+      image: context.read<AddRoomCubit>().imageController.text,
+      price: double.parse(
+        context.read<AddRoomCubit>().priceController.text,
+      ),
+      type: context.read<AddRoomCubit>().selectedRoomType?.name ?? 'SINGLE',
+      description: context.read<AddRoomCubit>().descriptionController.text,
+      amenities: List<String>.from(selectedAmenities), // Use selectedAmenities directly
+    ),
+  );
+},
+
+                          color: AppColors.primaryColor,
+                        );
                       },
                     ),
                   ),
                 ],
               ),
-              
-              SizedBox(height: 20),
             ],
           ),
         ),
       ),
     );
   }
+
+Widget _buildReservationToggle() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Reservation Status:',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: AppColors.primaryColor,
+        ),
+      ),
+      SizedBox(height: 10),
+      Row(
+        children: [
+          ChoiceChip(
+            label: Text('Available'),
+            selected: !context.read<AddRoomCubit>().isReserved,
+            onSelected: (selected) {
+              setState(() {
+                context.read<AddRoomCubit>().isReserved = false;
+              });
+            },
+            selectedColor: AppColors.secondaryColor.withOpacity(0.2),
+          ),
+          SizedBox(width: 10),
+          ChoiceChip(
+            label: Text('Reserved'),
+            selected: context.read<AddRoomCubit>().isReserved,
+            onSelected: (selected) {
+              setState(() {
+                context.read<AddRoomCubit>().isReserved = true;
+              });
+            },
+            selectedColor: AppColors.secondaryColor.withOpacity(0.2),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
 
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
@@ -336,7 +382,7 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
         ),
         SizedBox(height: 8),
         DropdownButtonFormField<RoomTypes>(
-          value: selectedRoomType,
+          value: context.read<AddRoomCubit>().selectedRoomType,
           decoration: InputDecoration(
             hintText: 'Select room type',
             prefixIcon: Icon(Icons.bed, color: AppColors.primaryColor),
@@ -356,47 +402,17 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
             fillColor: AppColors.backgroundColor,
           ),
           items: RoomTypes.values.map((type) {
-            return DropdownMenuItem(
-              value: type,
-              child: Text(_getRoomTypeText(type)),
-            );
+            return DropdownMenuItem(value: type, child: Text(type.name));
           }).toList(),
-          onChanged: (value) => setState(() => selectedRoomType = value),
+          onChanged: (value) => setState(
+            () => context.read<AddRoomCubit>().selectedRoomType = value,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildReservationToggle() {
-    return Row(
-      children: [
-        Icon(Icons.toggle_on, color: AppColors.primaryColor),
-        SizedBox(width: 10),
-        Text(
-          'Room Status',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: AppColors.primaryColor,
-          ),
-        ),
-        Spacer(),
-        Switch(
-          value: isReserved,
-          onChanged: (value) => setState(() => isReserved = value),
-          activeColor: AppColors.secondaryColor,
-          activeTrackColor: AppColors.secondaryColor.withOpacity(0.3),
-        ),
-        Text(
-          isReserved ? 'Reserved' : 'Available',
-          style: TextStyle(
-            color: isReserved ? Colors.orange : Colors.green,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
+ 
 
   Widget _buildAmenitiesGrid() {
     return GridView.builder(
@@ -412,7 +428,7 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
       itemBuilder: (context, index) {
         final amenity = availableAmenities[index];
         final isSelected = selectedAmenities.contains(amenity);
-        
+
         return GestureDetector(
           onTap: () {
             setState(() {
@@ -425,10 +441,14 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
           },
           child: Container(
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.secondaryColor.withOpacity(0.2) : Colors.grey[100],
+              color: isSelected
+                  ? AppColors.secondaryColor.withOpacity(0.2)
+                  : Colors.grey[100],
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: isSelected ? AppColors.secondaryColor : Colors.grey[300]!,
+                color: isSelected
+                    ? AppColors.secondaryColor
+                    : Colors.grey[300]!,
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -438,7 +458,9 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
                   padding: EdgeInsets.all(8),
                   child: Icon(
                     isSelected ? Icons.check_circle : Icons.circle_outlined,
-                    color: isSelected ? AppColors.secondaryColor : Colors.grey[500],
+                    color: isSelected
+                        ? AppColors.secondaryColor
+                        : Colors.grey[500],
                     size: 20,
                   ),
                 ),
@@ -447,8 +469,12 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
                     amenity,
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? AppColors.primaryColor : Colors.grey[700],
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      color: isSelected
+                          ? AppColors.primaryColor
+                          : Colors.grey[700],
                     ),
                   ),
                 ),
@@ -458,86 +484,5 @@ class _AddRoomWidgetState extends State<AddRoomWidget> {
         );
       },
     );
-  }
-
-  Widget _buildButton({
-    required String text,
-    required Color color,
-    required VoidCallback onPressed,
-    bool isSecondary = false,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSecondary ? Colors.transparent : color,
-        foregroundColor: isSecondary ? color : Colors.white,
-        side: isSecondary ? BorderSide(color: color) : null,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        elevation: isSecondary ? 0 : 3,
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  String _getRoomTypeText(RoomTypes type) {
-    switch (type) {
-      case RoomTypes.SINGLE:
-        return 'Single Room';
-      case RoomTypes.DOUBLE:
-        return 'Double Room';
-      case RoomTypes.SUITE:
-        return 'Suite';
-      case RoomTypes.DELUXE:
-        return 'Deluxe Room';
-    }
-  }
-
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 30),
-              SizedBox(width: 10),
-              Text('Success!'),
-            ],
-          ),
-          content: Text('Room has been added successfully to the hotel.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'OK',
-                style: TextStyle(color: AppColors.primaryColor),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _roomNumberController.dispose();
-    _priceController.dispose();
-    _descriptionController.dispose();
-    _imageController.dispose();
-    super.dispose();
   }
 }

@@ -66,13 +66,12 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     await Future.delayed(const Duration(milliseconds: 800));
     _rotateController.repeat(reverse: true);
 
-    // انتظار 4 ثواني ثم الانتقال للصفحة التالية
     await Future.delayed(const Duration(seconds: 4));
     _navigateToHome();
   }
 
   void _navigateToHome() {
-    context.go(Routes.roomDetails);
+    context.go(Routes.clientsDashboard);
   }
 
   @override
